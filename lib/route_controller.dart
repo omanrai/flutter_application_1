@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map/flutter_map.dart' show MapEvent, MapEventSource;
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -25,6 +26,11 @@ class RouteController extends GetxController {
   LatLng? destinationLocation;
   String authToken = "br4oKUSZxNaxf_-txuBg";
   double currentZoom = 0.0;
+
+  LatLng? savedMapPosition;
+  double? savedMapZoom;
+
+  bool isMapInteracting = false;
 
   late MapController mapController;
 
@@ -50,8 +56,54 @@ class RouteController extends GetxController {
     //   getBusInfo();
     //   print("Timer executed");
     // });
-    super.onInit();
     mapController = MapController();
+    super.onInit();
+  }
+
+  @override
+  void onClose() {
+    // TODO: implement onClose
+    stopLiveTracking();
+    super.onClose();
+  }
+
+  Timer? liveTrackingTimer;
+
+  // Method to start live tracking
+  // Method to start live tracking
+  void startLiveTracking() {
+    // Save the current map position and zoom level
+    savedMapPosition = mapController.camera.center;
+    savedMapZoom = mapController.camera.zoom;
+
+    // Start the timer to fetch bus info every 2 seconds
+    liveTrackingTimer = Timer.periodic(Duration(seconds: 2), (timer) {
+      if (!isMapInteracting) {
+        print("interact");
+        savedMapPosition = mapController.camera.center;
+        savedMapZoom = mapController.camera.zoom;
+        getBusInfo();
+      }
+      savedMapPosition = mapController.camera.center;
+      savedMapZoom = mapController.camera.zoom;
+      isMapInteracting = false;
+
+      update();
+    });
+
+    // Listen to map position changes
+  }
+
+  // Method to stop live tracking
+  void stopLiveTracking() {
+    liveTrackingTimer?.cancel();
+
+    // Restore map position and zoom level if available
+    if (savedMapPosition != null && savedMapZoom != null) {
+      mapController.moveAndRotate(savedMapPosition!, savedMapZoom!, 5);
+    }
+
+    update();
   }
 
   Future onRefresh() async {
@@ -152,7 +204,9 @@ class RouteController extends GetxController {
             .data![0].additionalAttributes!.movementMetrics!.location!.lat;
 
         currentLocation = LatLng(lat!, long!);
-        mapController.moveAndRotate(currentLocation!, 17, 5);
+        //     savedMapPosition = mapController.camera.center;
+        // savedMapZoom = mapController.camera.zoom;
+        mapController.move(currentLocation!, savedMapZoom!);
 
         update();
       } else {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -40,46 +42,6 @@ class RouteScreen extends StatelessWidget {
                         controller.routeModel.data!.isEmpty) {
                       return Center(child: Text("No data available"));
                     } else {
-                      return Container(
-                        color: Colors.amber,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: controller.routeModel.data!.length,
-                              itemBuilder: (context, index) {
-                                final datum =
-                                    controller.routeModel.data![index];
-                                return ListTile(
-                                  title: Text(
-                                      "Latitude: ${datum.lat}, Longitude: ${datum.lng}"),
-                                );
-                              },
-                            ),
-                            // Center(
-                            //   child: Lottie.asset('images/blue.json',
-                            //       height: 500, width: 500, fit: BoxFit.fill),
-                            // ),
-                          ],
-                        ),
-                      );
-                    }
-                  }),
-              SizedBox(
-                height: 20,
-              ),
-              GetBuilder<RouteController>(
-                  init: RouteController(),
-                  builder: (controller) {
-                    if (controller.isLoading) {
-                      return Center(child: CircularProgressIndicator());
-                    } else if (controller.errorServerData.isNotEmpty) {
-                      return Center(child: Text(controller.errorServerData));
-                    } else if (controller.routeModel.data == null ||
-                        controller.routeModel.data!.isEmpty) {
-                      return Center(child: Text("No data available"));
-                    } else {
                       return Stack(
                         children: [
                           SizedBox(
@@ -88,12 +50,14 @@ class RouteScreen extends StatelessWidget {
                               mapController: controller.mapController,
                               options: flutter_map.MapOptions(
                                 onPositionChanged: (position, hasGesture) {
+                                  controller.isMapInteracting = hasGesture;
                                   print('${position.hasGesture}');
                                   print('${position.center}');
 
                                   double zoomLevel = position.zoom!;
+
                                   // Adjust marker size based on zoom level
-                                  double iconSize = (zoomLevel - 14) * 12;
+                                  double iconSize = (zoomLevel - 14) * 11;
                                   double iconSize1 = (zoomLevel + 14) * 20;
                                   controller.updateMarkerIconSize(
                                       iconSize, iconSize1);
@@ -103,9 +67,13 @@ class RouteScreen extends StatelessWidget {
                                   print(
                                       'Zoom difference: ${controller.currentZoom}');
                                 },
-                                initialCenter: controller.currentLocation ??
+                                // initialCenter: controller.currentLocation ??
+                                //     const LatLng(26.658733, 87.269963),
+                                // initialZoom: 17.0,
+                                initialCenter: controller.savedMapPosition ??
                                     const LatLng(26.658733, 87.269963),
-                                initialZoom: 17.0,
+                                initialZoom: controller.savedMapZoom ?? 17.0,
+
                                 maxZoom: 18,
                                 minZoom: 14,
                                 // onMapReady: () {
@@ -157,16 +125,7 @@ class RouteScreen extends StatelessWidget {
                                                             ?.speed
                                                             ?.value ==
                                                         0.0
-                                                    ? Image.asset(
-                                                        'images/blue.gif',
-                                                        // width: 30,
-                                                        // height: 30,
-                                                        width:
-                                                            controller.iconSize,
-                                                        height:
-                                                            controller.iconSize,
-                                                      )
-                                                    : Icon(
+                                                    ? Icon(
                                                         Icons.directions_bus,
                                                         size:
                                                             controller.iconSize,
@@ -180,6 +139,15 @@ class RouteScreen extends StatelessWidget {
                                                                 0.0
                                                             ? Colors.red
                                                             : Colors.blue,
+                                                      )
+                                                    : Image.asset(
+                                                        'images/blue.gif',
+                                                        // width: 30,
+                                                        // height: 30,
+                                                        width:
+                                                            controller.iconSize,
+                                                        height:
+                                                            controller.iconSize,
                                                       ),
                                               ),
                                               // Text above the bus icon
@@ -333,6 +301,24 @@ class RouteScreen extends StatelessWidget {
                       );
                     }
                   }),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        routeController.startLiveTracking();
+                      },
+                      child: Text("Live")),
+                  TextButton(
+                      onPressed: () {
+                        routeController.stopLiveTracking();
+                      },
+                      child: Text("Stop Live")),
+                ],
+              ),
             ],
           ),
         ),
