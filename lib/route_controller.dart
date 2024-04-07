@@ -77,16 +77,17 @@ class RouteController extends GetxController {
     savedMapZoom = mapController.camera.zoom;
 
     // Start the timer to fetch bus info every 2 seconds
-    liveTrackingTimer = Timer.periodic(Duration(seconds: 2), (timer) {
-      if (!isMapInteracting) {
-        print("interact");
-        savedMapPosition = mapController.camera.center;
-        savedMapZoom = mapController.camera.zoom;
-        getBusInfo();
-      }
+    liveTrackingTimer = Timer.periodic(Duration(milliseconds: 300), (timer) {
+      // if (!isMapInteracting) {
+      //   print("interact");
+      //   savedMapPosition = mapController.camera.center;
+      //   savedMapZoom = mapController.camera.zoom;
+      //   getBusInfo();
+      // }
       savedMapPosition = mapController.camera.center;
       savedMapZoom = mapController.camera.zoom;
-      isMapInteracting = false;
+      // isMapInteracting = false;
+      getBusInfo();
 
       update();
     });
@@ -204,9 +205,10 @@ class RouteController extends GetxController {
             .data![0].additionalAttributes!.movementMetrics!.location!.lat;
 
         currentLocation = LatLng(lat!, long!);
-        //     savedMapPosition = mapController.camera.center;
-        // savedMapZoom = mapController.camera.zoom;
-        mapController.move(currentLocation!, savedMapZoom!);
+        // savedMapPosition = mapController.camera.center;
+        savedMapZoom = mapController.camera.zoom;
+        mapController.moveAndRotate(currentLocation!, savedMapZoom!, 5);
+        // mapController.move(currentLocation!, savedMapZoom!);
 
         update();
       } else {

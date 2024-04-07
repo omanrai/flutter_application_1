@@ -16,7 +16,7 @@ class TransportPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("OSM Demo"),
+        title: Text("Vehicle Detail"),
       ),
       body: RefreshIndicator(
         onRefresh: () => transportController.onRefresh(),
@@ -70,60 +70,6 @@ class TransportPage extends StatelessWidget {
                   );
                 }
               }),
-              SizedBox(
-                height: 20,
-              ),
-              GetBuilder<TransportController>(builder: (controller) {
-                return SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.6,
-                  child: Container(
-                    margin: EdgeInsets.all(10),
-                    child: FlutterMap(
-                      options: MapOptions(
-                        initialRotation: 0,
-                        // keepAlive: true,
-                        initialCenter: LatLng(26.659317,
-                            87.271289), // Initial map center coordinates
-                        initialZoom: 17,
-                      ),
-                      children: [
-                        MarkerLayer(
-                          markers: [
-                            Marker(
-                              rotate: false,
-                              point: LatLng(26.659317, 87.271289),
-                              alignment: Alignment.topCenter,
-                              width: 100,
-                              height: 100,
-                              child: Icon(
-                                Icons.directions_bus,
-                                color: Colors.red,
-                                size: 60.0,
-                              ),
-                            ),
-                          ],
-                        ),
-                        TileLayer(
-                          urlTemplate:
-                              'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                          userAgentPackageName: 'com.example.app',
-                        ),
-                        RichAttributionWidget(
-                          attributions: [
-                            TextSourceAttribution(
-                              'Koshi St. James. College',
-                              onTap: () {},
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }),
-              SizedBox(
-                height: 20,
-              ),
             ],
           ),
         ),

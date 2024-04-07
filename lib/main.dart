@@ -61,19 +61,19 @@ class _MyWidgetState extends State<MyWidget> {
               onPressed: () {
                 Get.to(() => TransportPage());
               },
-              child: Text("Flutter Map")),
+              child: Text("Vehicle Details")),
           SizedBox(height: 50),
           TextButton(
               onPressed: () {
                 Get.to(() => RouteScreen());
               },
-              child: Text("OSM")),
+              child: Text("Real Track")),
           SizedBox(height: 50),
           TextButton(
               onPressed: () {
                 Get.to(() => RealTimeMap());
               },
-              child: Text("live GPS")),
+              child: Text("Demo")),
         ],
       ),
     );

@@ -67,13 +67,12 @@ class RouteScreen extends StatelessWidget {
                                   print(
                                       'Zoom difference: ${controller.currentZoom}');
                                 },
-                                // initialCenter: controller.currentLocation ??
-                                //     const LatLng(26.658733, 87.269963),
-                                // initialZoom: 17.0,
-                                initialCenter: controller.savedMapPosition ??
+                                initialCenter: controller.currentLocation ??
                                     const LatLng(26.658733, 87.269963),
+                                // initialZoom: 17.0,
+                                // initialCenter: controller.savedMapPosition ??
+                                //     controller.currentLocation!,
                                 initialZoom: controller.savedMapZoom ?? 17.0,
-
                                 maxZoom: 18,
                                 minZoom: 14,
                                 // onMapReady: () {
@@ -129,16 +128,7 @@ class RouteScreen extends StatelessWidget {
                                                         Icons.directions_bus,
                                                         size:
                                                             controller.iconSize,
-                                                        color: controller
-                                                                    .vehicleModel
-                                                                    .data![0]
-                                                                    .additionalAttributes
-                                                                    ?.movementMetrics
-                                                                    ?.speed
-                                                                    ?.value ==
-                                                                0.0
-                                                            ? Colors.red
-                                                            : Colors.blue,
+                                                        color: Colors.red,
                                                       )
                                                     : Image.asset(
                                                         'images/blue.gif',
