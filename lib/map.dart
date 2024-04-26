@@ -13,8 +13,8 @@ import 'package:latlong2/latlong.dart';
 
 class RouteScreen extends StatelessWidget {
   final RouteController routeController = Get.put(RouteController());
-  final TransportController transportController =
-      Get.put(TransportController());
+  // final TransportController transportController =
+  //     Get.put(TransportController());
 
   RouteScreen({Key? key}) : super(key: key);
 
@@ -45,7 +45,7 @@ class RouteScreen extends StatelessWidget {
                       return Stack(
                         children: [
                           SizedBox(
-                            height: 500,
+                            height: 400,
                             child: flutter_map.FlutterMap(
                               mapController: controller.mapController,
                               options: flutter_map.MapOptions(
